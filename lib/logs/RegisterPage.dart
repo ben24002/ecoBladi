@@ -1,15 +1,18 @@
-// ignore_for_file: file_names
-
-import 'package:education/Components/MyButtons.dart';
-import 'package:education/Components/MyTextfields.dart';
-import 'package:education/Components/SquareTile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: file_names, non_constant_identifier_names, use_build_context_synchronously, avoid_print
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
+//firebase
+import 'package:firebase_auth/firebase_auth.dart';
+
+//locals
+import '../Components/MyButtons.dart';
+import '../Components/MyTextfields.dart';
+import '../Components/SquareTile.dart';
+import '../Constants/AppColors.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
-  RegisterPage({super.key, required this.onTap});
+  const RegisterPage({super.key, required this.onTap});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -77,29 +80,24 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[50],
+      backgroundColor: AppColors.bg,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(
-                  height: 25,
-                ),
                 //Logo
-                const Icon(
-                  Icons.recycling,
-                  size: 50,
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
+                Image.asset(
+                  'lib/images/LOGO.png',
+                  height: 180,
+                  width: 180,
+                ),//Logo
                 //let's create an account for you!
                 Text(
                   'let\'s create an account for you!',
                   style: TextStyle(
-                    color: Colors.grey[700],
+                    color: AppColors.textColor,
                     fontSize: 16,
                   ),
                 ),
@@ -149,7 +147,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       Expanded(
                         child: Divider(
                           thickness: 0.5,
-                          color: Colors.grey[400],
+                          color: AppColors.expended,
                         ),
                       ),
                       Padding(
@@ -157,21 +155,21 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Text(
                           'Or continue with',
                           style: TextStyle(
-                            color: Colors.grey[700],
+                            color: AppColors.textColor,
                           ),
                         ),
                       ),
                       Expanded(
                         child: Divider(
                           thickness: 0.5,
-                          color: Colors.grey[400],
+                          color: AppColors.expended,
                         ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 25,
                 ),
                 //google + apple sign in buttons
                 const Row(
@@ -183,11 +181,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: 25,
                     ),
                     //apple button
-                    SquareTile(imagePath: 'lib/images/AppleLogo.jpg'),
+                    SquareTile(imagePath: 'lib/images/AppleLogo.png'),
                   ],
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 20,
                 ),
                 //not a member? register now!
                 Row(
@@ -196,7 +194,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Text(
                       'already have an account?',
                       style: TextStyle(
-                        color: Colors.grey[700],
+                        color: AppColors.textColor,
                       ),
                     ),
                     const SizedBox(

@@ -1,15 +1,18 @@
-// ignore_for_file: file_names
-
-import 'package:education/Components/MyButtons.dart';
-import 'package:education/Components/MyTextfields.dart';
-import 'package:education/Components/SquareTile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: file_names, use_build_context_synchronously, avoid_print
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
+//firebase
+import 'package:firebase_auth/firebase_auth.dart';
+
+//locals
+import '../Components/MyButtons.dart';
+import '../Components/MyTextfields.dart';
+import '../Components/SquareTile.dart';
+import '../Constants/AppColors.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
-  LoginPage({super.key, required this.onTap});
+  const LoginPage({super.key, required this.onTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -70,29 +73,24 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[50],
+      backgroundColor: AppColors.bg,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(
-                  height: 50,
-                ),
                 //Logo
-                const Icon(
-                  Icons.recycling,
-                  size: 100,
-                ),
-                const SizedBox(
-                  height: 50,
+                Image.asset(
+                  'lib/images/LOGO.png',
+                  height: 220,
+                  width: 220,
                 ),
                 //Welcome back, you've been missed!
                 Text(
                   'Welcome back, you\'ve been missed!',
                   style: TextStyle(
-                    color: Colors.grey[700],
+                    color: AppColors.textColor,
                     fontSize: 16,
                   ),
                 ),
@@ -124,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Text(
                         'fogot password?',
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: TextStyle(color: AppColors.textColor),
                       ),
                     ],
                   ),
@@ -148,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                       Expanded(
                         child: Divider(
                           thickness: 0.5,
-                          color: Colors.grey[400],
+                          color: AppColors.expended,
                         ),
                       ),
                       Padding(
@@ -156,14 +154,14 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text(
                           'Or continue with',
                           style: TextStyle(
-                            color: Colors.grey[700],
+                            color: AppColors.textColor,
                           ),
                         ),
                       ),
                       Expanded(
                         child: Divider(
                           thickness: 0.5,
-                          color: Colors.grey[400],
+                          color: AppColors.expended,
                         ),
                       ),
                     ],
@@ -182,11 +180,11 @@ class _LoginPageState extends State<LoginPage> {
                       width: 25,
                     ),
                     //apple button
-                    SquareTile(imagePath: 'lib/images/AppleLogo.jpg'),
+                    SquareTile(imagePath: 'lib/images/AppleLogo.png'),
                   ],
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 25,
                 ),
                 //not a member? register now!
                 Row(
@@ -195,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                     Text(
                       'Not a member?',
                       style: TextStyle(
-                        color: Colors.grey[700],
+                        color: AppColors.textColor,
                       ),
                     ),
                     const SizedBox(

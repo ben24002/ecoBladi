@@ -1,6 +1,8 @@
-import 'package:education/logs/LoginPage.dart';
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 
+//locals
+import 'LoginPage.dart';
 import 'RegisterPage.dart';
 
 class LoginOrRegisterPage extends StatefulWidget {
@@ -24,7 +26,8 @@ class _LoginOrRegisterPageState extends State<LoginOrRegisterPage> {
   Widget build(BuildContext context) {
     if (showLoginPage) {
       return LoginPage(onTap: togglePages);
-    } else
+    } else {
       return RegisterPage(onTap: togglePages);
+    }
   }
 }

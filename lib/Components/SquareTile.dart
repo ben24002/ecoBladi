@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 
 class SquareTile extends StatelessWidget {
@@ -10,7 +12,7 @@ class SquareTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(
+      padding: const EdgeInsets.all(
         20,
       ),
       decoration: BoxDecoration(

@@ -1,23 +1,37 @@
 buildscript {
     repositories {
         google()
-        mavenCentral()
+        jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
     }
+
 
     dependencies {
-        classpath "com.android.tools.build:gradle:7.0.0" // Update to the latest version
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10" // Update to the latest version
-        classpath "dev.flutter:flutter-gradle-plugin:1.0.0" // Update to the latest version
-        classpath "com.google.gms:google-services:4.4.1"
+        classpath 'com.android.tools.build:gradle:4.1.0'
+        //classpath "com.android.tools.build:gradle:8.3.1" // Update to the latest version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23" // Update to the latest version
+        classpath 'com.google.gms:google-services:4.3.10'
+        //classpath "dev.flutter:flutter-gradle-plugin:3.19.5" // Update to the latest version
+        //classpath 'com.google.gms:google-services:4.4.1'
+        //implementation platform('com.google.firebase:firebase-bom:32.8.0')
+        //implementation 'com.google.firebase:firebase-analytics'
+
     }
 }
 
-plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
 }
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: "kotlin-android"
+apply plugin: "dev.flutter.flutter-gradle-plugin"
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
@@ -38,7 +52,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    compileSdkVersion 31 // Update to the latest SDK version
+    compileSdkVersion 33 // Update to the latest SDK version
     buildToolsVersion "31.0.0" // Update to the latest version
     defaultConfig {
         applicationId "com.example.education"
@@ -49,12 +63,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
     sourceSets {

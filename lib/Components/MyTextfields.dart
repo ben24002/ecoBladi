@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, prefer_typing_uninitialized_variables
+
 import 'package:flutter/material.dart';
 
 class MyTextfields extends StatelessWidget {
@@ -18,7 +20,7 @@ class MyTextfields extends StatelessWidget {
         controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
-          enabledBorder: OutlineInputBorder(
+          enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.white,
             ),
