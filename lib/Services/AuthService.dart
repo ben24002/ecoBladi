@@ -1,18 +1,17 @@
-// ignore_for_file: file_names, non_constant_identifier_names, avoid_types_as_parameter_names, must_be_immutable
-import 'package:flutter/material.dart';
+// ignore_for_file: must_be_immutable, file_names, avoid_print
 
-//firebase
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//logs pages
 import '../UI/AllUsers.dart';
 import '../logs/LoginOrRegisterPage.dart';
 
 class AuthPage extends StatelessWidget {
   AuthPage({super.key});
-  
+
   User? currentUser = FirebaseAuth.instance.currentUser;
+  static FirebaseFirestore bd =FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -20,40 +19,42 @@ class AuthPage extends StatelessWidget {
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          //user logged in
           if (snapshot.hasData) {
             return const HomePage();
-          }
-          //user not logged in
-          else {
+          } else {
             return const LoginOrRegisterPage();
           }
         },
       ),
     );
   }
-  //sign user out methode
-  signOutUser(){
+
+  // Sign user out method
+  void signOutUser() {
     FirebaseAuth.instance.signOut();
   }
 
-  authorizeAccess(BuildContext context) {
-  if (currentUser != null) {
-    FirebaseFirestore.instance
-        .collection('/Users')
-        .where('ID', isEqualTo: currentUser!.uid)
-        .get()
-        .then((QuerySnapshot docs) {
-      if (docs.docs.isNotEmpty) {
-        Map<String, dynamic>? userData = docs.docs[0].data() as Map<String, dynamic>?; // Explicit cast to Map<String, dynamic>?
-        if (userData != null && userData['role'] == 'admin') {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => const HomePage(),
-          ));
+  // Authorize access method
+  void authorizeAccess(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {bd
+          .collection('/Utilisateurs')
+          .where('ID', isEqualTo: currentUser.uid)
+          .get()
+          .then((QuerySnapshot docs) {
+        if (docs.docs.isNotEmpty) {
+          Map<String, dynamic>? userData =
+              docs.docs[0].data() as Map<String, dynamic>?; // Explicit cast to Map<String, dynamic>?
+          if (userData != null && userData['role'] == 'admin') {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => const HomePage(),
+            ));
+          }
         }
-      }
-    });
+      }).catchError((error) {
+        print("Error authorizing access: $error");
+        // Handle the error here, e.g., display a message to the user
+      });
+    }
   }
-}
-
 }

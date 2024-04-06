@@ -1,9 +1,17 @@
 //firebase
+// ignore_for_file: avoid_print, body_might_complete_normally_catch_error
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:education/Constants/AppColors.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
+
+//locals
+//import '../Constants/models.dart';
 
 class FirestoreService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static FirestoreService get instance => Get.find();
 
   // Initialize Firestore
   FirestoreService() {
@@ -14,112 +22,76 @@ class FirestoreService {
     await Firebase.initializeApp();
   }
 
-  // Add User to Firestore
-  Future<void> addUser(
-    String name,
-    String prenom,
-    String email,
-    String adress,
-    String id,
-    String mdp,
-  ) async {
-    await _firestore.collection('Utilisateurs').add({
-      'NomUtilisateur': name,
-      'PrenomUtilisateur': prenom,
-      'MailUtilisateur': email,
-      'AdressUtilisateur': adress,
-      'IDUtilisateur': id,
-      'MDPUtilisateur': mdp,
+  //add users
+/*
+  createUser(UsersModel user) async {
+    await _db
+        .collection('Utilisateurs')
+        .add(user.toJson())
+        .whenComplete(() => Get.snackbar(
+              "success",
+              "you're account has been created.",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: AppColors.first,
+            ))
+        .catchError((error, stackTrace) {
+      Get.snackbar(
+        "Error",
+        "something went wrong. try again",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.errbg,
+        colorText: AppColors.errtxt,
+      );
     });
-  }
+  }*/
 
-  // Add Admin to Firestore
-  Future<void> addAdmin(
-    String name,
-    String prenom,
-    String id,
-    String mdp,
-    String email,
-  ) async {
-    await _firestore.collection('Admin').add({
-      'NomAdmin': name,
-      'PrenomAdmin': prenom,
-      'IDAdmin': id,
-      'MDPAdmin': mdp,
-      'MailAdmin': email,
-    });
-  }
+  Future<bool> addUser(String name, String familyName, String address,
+      String email, String password,
+      {String? role}) async {
+    try {
+      // Determine role
+      // Set role to 'admin' if explicitly provided, otherwise set it to 'user'
+      String userRole = role == 'admin' ? 'admin' : 'user';
 
-  // Add Eboueur to Firestore
-  Future<void> addEbouaur(
-    String name,
-    String prenom,
-    String email,
-    String id,
-    String mdp,
-  ) async {
-    await _firestore.collection('Eboueurs').add({
-      'NomEboueur': name,
-      'PrenomEboueur': prenom,
-      'MailEboueur': email,
-      'IDEboueur': id,
-      'MDPEboueur': mdp,
-    });
-  }
-
-  // Add Amenageur to Firestore
-  Future<void> addAmenageurs(
-    int tarif,
-    String numTel,
-    String localisation,
-    String matricul,
-    String evaluation,
-    String typeV,
-    String name,
-    String prenom,
-    String email,
-    String id,
-    String mdp,
-  ) async {
-    await _firestore.collection('Amenageurs').add({
-      'NomAmenageur': name,
-      'PrenomAmenageur': prenom,
-      'MailAmenageur': email,
-      'IDAmenageur': id,
-      'MDPAmenageur': mdp,
-      'TypeVehiculeAmenageur': typeV,
-      'TarifAmenageur': tarif,
-      'NumTlfAmenageur': numTel,
-      'LocalisationAmenageur': localisation,
-      'ImmatriculationAmenageur': matricul,
-      'EvaluationAmenageur': evaluation,
-    });
+      // Add a document to the "users" collection
+      await _db
+          // Name of the collection (similar to a table)
+          .collection('users')
+          .add({
+        'name': name,
+        'familyName': familyName,
+        'address': address,
+        'email': email,
+        'password': password,
+        // Set the role field
+        'role': userRole,
+        // Add more fields as needed
+      });
+      print("Document added successfully!");
+      return true; // Return true if successful
+    } catch (error) {
+      print("Failed to add document: $error");
+      return false; // Return false if there's an error
+    }
   }
 
   // Get all users from Firestore
   Stream<List<DocumentSnapshot>> getUsers() {
-    return _firestore.collection('Utilisateurs').snapshots().map((snapshot) {
-      return snapshot.docs;
-    });
-  }
-
-  // Get all users from Firestore
-  Stream<List<DocumentSnapshot>> getAdmins() {
-    return _firestore.collection('Admin').snapshots().map((snapshot) {
+    return _db.collection('Utilisateurs').snapshots().map((snapshot) {
       return snapshot.docs;
     });
   }
 
   // Get all users from Firestore
   Stream<List<DocumentSnapshot>> getEboueurs() {
-    return _firestore.collection('Eboueurs').snapshots().map((snapshot) {
+    return _db.collection('Eboueurs').snapshots().map((snapshot) {
       return snapshot.docs;
     });
   }
 
   // Get all users from Firestore
   Stream<List<DocumentSnapshot>> getAmenageurs() {
-    return _firestore.collection('Amenageurs').snapshots().map((snapshot) {
+    return _db.collection('Amenageurs').snapshots().map((snapshot) {
       return snapshot.docs;
     });
   }

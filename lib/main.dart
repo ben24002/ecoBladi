@@ -1,9 +1,15 @@
-import 'firebase_options.dart';
+//fluter
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+//firebase
+import 'firebase_options.dart';
+
 //import 'package:education/firestore_service.dart';
 import 'package:education/Services/AuthService.dart';
+import 'UI/homePage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,9 +25,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return  const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthPage(),
+      home: HomePage(),
     );
   }
 }

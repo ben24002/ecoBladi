@@ -52,15 +52,16 @@ if (flutterVersionName == null) {
 }
 
 android {
-    compileSdkVersion 33 // Update to the latest SDK version
+    compileSdkVersion 34 // Update to the latest SDK version
     buildToolsVersion "31.0.0" // Update to the latest version
     defaultConfig {
         applicationId "com.example.education"
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        minSdkVersion 20 // Set it to at least 20 to resolve the conflict
+        targetSdkVersion 34 // Set it to the latest SDK version
+        versionCode 1 // Update with your desired version code
+        versionName "1.0" // Update with your desired version name
     }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
