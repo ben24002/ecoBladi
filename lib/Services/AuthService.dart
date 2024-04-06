@@ -20,7 +20,7 @@ class AuthPage extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const HomePage();
+            return AllUsers();
           } else {
             return const LoginOrRegisterPage();
           }
@@ -47,7 +47,7 @@ class AuthPage extends StatelessWidget {
               docs.docs[0].data() as Map<String, dynamic>?; // Explicit cast to Map<String, dynamic>?
           if (userData != null && userData['role'] == 'admin') {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => const HomePage(),
+              builder: (BuildContext context) => AllUsers(),
             ));
           }
         }

@@ -25,22 +25,6 @@ class HomePage extends StatelessWidget {
     // Implement the home method
   }
 
-  void home() {
-    // Implement the home method
-  }
-
-  void search() {
-    // Implement the search method
-  }
-
-  void notification() {
-    // Implement the notification method
-  }
-
-  void personalH() {
-    // Implement the personalH method
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,11 +66,7 @@ class HomePage extends StatelessWidget {
             height: 58,
           ),
           // AppBottom
-          UIbottom(
-            onTap1: home,
-            onTap2: search,
-            onTap3: notification,
-            onTap4: personalH,
+          const UIbottom(
           ),
         ],
       ),

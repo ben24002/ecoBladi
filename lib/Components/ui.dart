@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 //locals
 import '../Constants/AppColors.dart';
+import '../UI/AllUsers.dart';
+import '../UI/homePage.dart';
+import '../UI/notifPage.dart';
+import '../UI/searchPage.dart';
 
 //appBar
 class UIappBar extends StatelessWidget {
@@ -28,7 +32,6 @@ class UIappBar extends StatelessWidget {
               ),
             ),
           ),
-          // Center the text within the Container
           alignment: Alignment.center,
           child: Text(
             hintTxt,
@@ -47,17 +50,34 @@ class UIappBar extends StatelessWidget {
 
 //appBottom
 class UIbottom extends StatelessWidget {
-  final Function()? onTap1;
-  final Function()? onTap2;
-  final Function()? onTap3;
-  final Function()? onTap4;
   const UIbottom({
     super.key,
-    required this.onTap1,
-    required this.onTap2,
-    required this.onTap3,
-    required this.onTap4,
   });
+  //methodes
+  void onTap1(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
+  }
+  void onTap2(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SearchPage()),
+    );
+  }
+  void onTap3(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const NotificationPage()),
+    );
+  }
+  void onTap4(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AllUsers()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -9,23 +9,14 @@ import 'package:flutter/material.dart';
 import '../Components/MyTextfields.dart';
 import '../Components/ui.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class AllUsers extends StatelessWidget {
+  AllUsers({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   //text editing controller
   final fullNameController = TextEditingController();
   final adressController = TextEditingController();
   //methods
   update() {}
-  home() {}
-  seach() {}
-  notification() {}
-  personalH() {}
 
   //UI
   @override
@@ -63,11 +54,7 @@ class _HomePageState extends State<HomePage> {
             height: 179,
           ),
           //appBottom
-          UIbottom(
-            onTap1: home(),
-            onTap2: seach(),
-            onTap3: notification(),
-            onTap4: personalH(),
+          const UIbottom(
           )
         ],
       ),
