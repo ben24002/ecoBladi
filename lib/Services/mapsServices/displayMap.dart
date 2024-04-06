@@ -1,23 +1,19 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
-
-import '../../Constants/AppColors.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart'; // Import Google Maps Flutter package
 
 class DisplayMap extends StatelessWidget {
   const DisplayMap({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      width: 400,
-      height: 400,
-      color: AppColors.first,
-      child: const Text(
-        "map",
-        style: TextStyle(fontSize: 50),
+    return GoogleMap(
+      initialCameraPosition: const CameraPosition(
+        target: LatLng(37.7749, -122.4194), // Set initial position to San Francisco
+        zoom: 12, // Adjust the zoom level as needed
       ),
+      onMapCreated: (GoogleMapController controller) {
+        // You can use the controller here if needed
+      },
     );
   }
 }
