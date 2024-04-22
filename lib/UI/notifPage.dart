@@ -12,6 +12,7 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
+      bottomNavigationBar: UIbottom(),
       body: Column(
         children: [
           UIappBar(hintTxt: 'Notification'),
@@ -21,7 +22,6 @@ class NotificationPage extends StatelessWidget {
           SizedBox(
             height: 600,
           ),
-          UIbottom(),
         ],
       ),
     );

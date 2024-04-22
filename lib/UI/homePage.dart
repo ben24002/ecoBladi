@@ -28,6 +28,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: const UIbottom(),
       backgroundColor: AppColors.background,
       body: Column(
         children: [
@@ -64,9 +65,6 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(
             height: 58,
-          ),
-          // AppBottom
-          const UIbottom(
           ),
         ],
       ),

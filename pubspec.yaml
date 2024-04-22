@@ -29,6 +29,9 @@ environment:
 # versions available, run `flutter pub outdated`.
 
 dependencies:
+  flutter_map: ^6.1.0
+  flutter_map_cancellable_tile_provider:
+  google_nav_bar: ^5.0.6
   get: ^4.6.6
   google_maps_flutter: ^2.6.0
   firebase_core: ^2.27.1

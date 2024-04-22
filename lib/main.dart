@@ -1,4 +1,4 @@
-//fluter
+//flutter
 // ignore_for_file: unused_import
 
 import 'package:flutter/material.dart';
@@ -9,8 +9,10 @@ import 'firebase_options.dart';
 
 //import 'package:education/firestore_service.dart';
 import 'UI/searchPage.dart';
-import 'package:education/Services/AuthService.dart';
+import '../Services/AuthService.dart';
 import 'UI/homePage.dart';
+import 'logs/LoginOrRegisterPage.dart';
+import 'logs/RegisterPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,9 +28,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SearchPage(),
+      home: LoginOrRegisterPage(), 
+
     );
   }
 }

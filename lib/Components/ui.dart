@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 
 //locals
@@ -60,18 +62,21 @@ class UIbottom extends StatelessWidget {
       MaterialPageRoute(builder: (context) => const HomePage()),
     );
   }
+
   void onTap2(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => SearchPage()),
     );
   }
+
   void onTap3(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const NotificationPage()),
     );
   }
+
   void onTap4(BuildContext context) {
     Navigator.push(
       context,
@@ -95,28 +100,31 @@ class UIbottom extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
-              onTap1;
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
             },
             icon: const Icon(Icons.home),
             color: Colors.white,
           ),
           IconButton(
             onPressed: () {
-              onTap2;
+              onTap2(context);
             },
             icon: const Icon(Icons.search),
             color: Colors.white,
           ),
           IconButton(
             onPressed: () {
-              onTap3;
+              onTap3(context);
             },
             icon: const Icon(Icons.notifications),
             color: Colors.white,
           ),
           IconButton(
             onPressed: () {
-              onTap4;
+              onTap4(context);
             },
             icon: const Icon(Icons.person),
             color: Colors.white,

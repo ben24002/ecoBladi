@@ -16,31 +16,32 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const UIappBar(hintTxt: 'navigate'),
-          const SizedBox(
-            height: 25,
-          ),
-          MyTextfields(
-            controller: navigationController,
-            hintText: "search",
-            obscureText: false,
-          ),
-          const SizedBox(
-            height: 25,
-          ),
-          const RatingCart(
-            imagePath: "lib/images/LOGO.png",
-            text: "text",
-            percentage: 80,
-          ),
-          const SizedBox(
-            height: 400,
-          ),
-          const UIbottom(
-          ),
-        ],
+      bottomNavigationBar: const UIbottom(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const UIappBar(hintTxt: 'navigate'),
+            const SizedBox(
+              height: 25,
+            ),
+            MyTextfields(
+              controller: navigationController,
+              hintText: "search",
+              obscureText: false,
+            ),
+            const SizedBox(
+              height: 25,
+            ),
+            const RatingCart(
+              imagePath: "lib/images/LOGO.png",
+              text: "text",
+              percentage: 80,
+            ),
+            const SizedBox(
+              height: 400,
+            ),
+          ],
+        ),
       ),
     );
   }
