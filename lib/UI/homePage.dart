@@ -28,14 +28,47 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //appbar
+      appBar: AppBar(
+        backgroundColor: AppColors.first,
+        automaticallyImplyLeading: false,
+        leading: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+          child: IconButton(
+            icon: const Icon(
+              Icons.menu,
+              color: Colors.black,
+              size: 30,
+            ),
+            onPressed: () {
+              print('IconButton pressed ...');
+            },
+            splashRadius:
+                25.0, // Customize the splash radius for a smoother effect
+            padding: const EdgeInsets.symmetric(
+                horizontal: 10.0), // Adjust padding as needed
+          ),
+        ),
+        title: const Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(60, 0, 0, 0),
+          child: Text(
+            'EcoBladi',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              color: Colors.black,
+              fontSize: 35,
+              letterSpacing: 0,
+            ),
+          ),
+        ),
+        centerTitle: false,
+        elevation: 2,
+      ),
+
       bottomNavigationBar: const UIbottom(),
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          const UIappBar(hintTxt: "HomePage"),
-          const SizedBox(
-            height: 100,
-          ),
           //map
           const DisplayMap(),
           OptionsDisplay(

@@ -9,54 +9,13 @@ import '../UI/homePage.dart';
 import '../UI/notifPage.dart';
 import '../UI/searchPage.dart';
 
-//appBar
-class UIappBar extends StatelessWidget {
-  final String hintTxt;
-  const UIappBar({
-    super.key,
-    required this.hintTxt,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 435,
-          height: 104,
-          decoration: ShapeDecoration(
-            color: AppColors.cnst,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(100),
-                bottomRight: Radius.circular(100),
-              ),
-            ),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            hintTxt,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 //appBottom
 class UIbottom extends StatelessWidget {
   const UIbottom({
     super.key,
   });
   //methodes
-  void onTap1(BuildContext context) {
+  static void onTap1(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const HomePage()),

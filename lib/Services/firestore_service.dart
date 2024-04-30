@@ -1,8 +1,11 @@
 //firebase
 // ignore_for_file: avoid_print, body_might_complete_normally_catch_error, unused_element
 
+import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:education/Constants/AppColors.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 
@@ -17,11 +20,26 @@ class FirestoreService {
   FirestoreService() {
     initializeFirestore();
   }
+  String getUserId() {
+    String id = FirebaseAuth.instance.currentUser!.uid;
+    print("___________________________________________");
+    print(id);
+    return id;
+  }
+
+  void setPointPosition(LatLng tappedCoords) {
+    String id = FirebaseAuth.instance.currentUser!.uid;
+    print("___________________________________________");
+    print(id);
+    _db
+        .collection('Positions')
+        .doc(getUserId())
+        .set({'position_X': tappedCoords.toJson()});
+  }
 
   Future<void> initializeFirestore() async {
     await Firebase.initializeApp();
   }
-
 
   Future<void> createRoom(collection, docid, data) async {
     await FirebaseFirestore.instance

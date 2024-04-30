@@ -12,6 +12,7 @@ import '../Components/MyButtons.dart';
 import '../Components/MyTextfields.dart';
 import '../Components/SquareTile.dart';
 import '../Constants/AppColors.dart';
+import '../Services/firestore_service.dart';
 import '../UI/AllUsers.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -32,23 +33,24 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final ConfirmPasswordController = TextEditingController();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  
-    //generating random docs key
-    String generateRandomString() {
-      // Définir les caractères autorisés (alphanumériques)
-      const String allowedChars =
-          'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  final fire = FirestoreService();
 
-      // Créer un générateur de nombres aléatoires
-      final Random random = Random();
+  //generating random docs key
+  String generateRandomString() {
+    // Définir les caractères autorisés (alphanumériques)
+    const String allowedChars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-      // Générer la chaîne aléatoire de la longueur spécifiée
-      return List.generate(20, (index) {
-        // Choisir un caractère aléatoire dans la chaîne de caractères autorisés
-        final int randomIndex = random.nextInt(allowedChars.length);
-        return allowedChars[randomIndex];
-      }).join();
-    }
+    // Créer un générateur de nombres aléatoires
+    final Random random = Random();
+
+    // Générer la chaîne aléatoire de la longueur spécifiée
+    return List.generate(20, (index) {
+      // Choisir un caractère aléatoire dans la chaîne de caractères autorisés
+      final int randomIndex = random.nextInt(allowedChars.length);
+      return allowedChars[randomIndex];
+    }).join();
+  }
 
   //sign user up methode
   void signUserUp() async {
@@ -88,12 +90,14 @@ class _RegisterPageState extends State<RegisterPage> {
           password: passwordController.text,
         );
         print('user created');
-        await _db.collection('Utilisateurs').doc(generateRandomString()).set({
+        await _db.collection('Utilisateurs').doc(fire.getUserId()).set({
           'username': usernameController.text,
           'password': passwordController.text,
           'role': 'user',
         });
         print('user added');
+        print('______________________________________________________________');
+        print(fire.getUserId());
         //pop the loading circle
         Navigator.pop(context);
         Navigator.push(

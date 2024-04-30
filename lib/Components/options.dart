@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//locals
 import '../Constants/AppColors.dart';
 
 class OptionItem {
@@ -23,7 +24,7 @@ class OptionsDisplay extends StatelessWidget {
     super.key,
     required this.options,
     this.itemWidth = 64,
-    this.itemHeight = 85,
+    this.itemHeight = 70,
   });
 
   @override
@@ -35,9 +36,11 @@ class OptionsDisplay extends StatelessWidget {
           itemCount: (options.length / 3).ceil(), // Calculate number of rows
           itemBuilder: (context, index) {
             return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Align items vertically
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceEvenly, // Align items vertically
               children: options
-                  .sublist(index * 3, (index + 1) * 3) // Get three items for each row
+                  .sublist(index * 3,
+                      (index + 1) * 3) // Get three items for each row
                   .map((item) {
                 return Expanded(
                   child: SizedBox(
@@ -59,7 +62,9 @@ class OptionsDisplay extends StatelessWidget {
                               child: Icon(item.icon),
                             ),
                           ),
-                          const SizedBox(height: 8), // Add some spacing between icon and text
+                          const SizedBox(
+                              height:
+                                  8), // Add some spacing between icon and text
                           Text(
                             item.hintText,
                             textAlign: TextAlign.center,
