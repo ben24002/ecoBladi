@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import '../Components/amenageurCarts.dart';
 import '../Components/MyTextfields.dart';
 import '../Components/ui.dart';
+import '../UI/homePage.dart';
 import '../Constants/AppColors.dart';
+import 'ProfilMenu.dart';
 
 class SearchPage extends StatelessWidget {
   SearchPage({super.key});
@@ -57,7 +59,8 @@ class SearchPage extends StatelessWidget {
                 size: 30,
               ),
               onPressed: () {
-                print('IconButton pressed ...');
+                Scaffold.of(context)
+                    .openDrawer(); // Open the drawer from the left
               },
               splashRadius:
                   25.0, // Customize the splash radius for a smoother effect
@@ -68,6 +71,35 @@ class SearchPage extends StatelessWidget {
         ],
         centerTitle: false,
         elevation: 2,
+      ),
+      drawer: Drawer(
+        backgroundColor:
+            AppColors.expended, // Match the background color to AppBar
+        child: ListView(
+          children: [
+            const Divider(),
+            ListTile(
+              title: const Text('Profil'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilMenu()),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              title: const Text('Option 2'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+            ),
+            // Add more ListTile widgets as needed
+          ],
+        ),
       ),
       bottomNavigationBar: const UIbottom(),
       body: SingleChildScrollView(

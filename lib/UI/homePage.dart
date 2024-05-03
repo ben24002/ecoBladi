@@ -7,6 +7,7 @@ import '../Components/options.dart';
 import '../Constants/AppColors.dart';
 import '../Services/mapsServices/displayMap.dart';
 import '../Components/ui.dart';
+import 'ProfilMenu.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -28,25 +29,27 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appbar
       appBar: AppBar(
         backgroundColor: AppColors.first,
         automaticallyImplyLeading: false,
         leading: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
-          child: IconButton(
-            icon: const Icon(
-              Icons.menu,
-              color: Colors.black,
-              size: 30,
+          child: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(
+                Icons.menu,
+                color: Colors.black,
+                size: 30,
+              ),
+              onPressed: () {
+                Scaffold.of(context)
+                    .openDrawer(); // Open the drawer from the left
+              },
+              splashRadius:
+                  25.0, // Customize the splash radius for a smoother effect
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0), // Adjust padding as needed
             ),
-            onPressed: () {
-              print('IconButton pressed ...');
-            },
-            splashRadius:
-                25.0, // Customize the splash radius for a smoother effect
-            padding: const EdgeInsets.symmetric(
-                horizontal: 10.0), // Adjust padding as needed
           ),
         ),
         title: const Padding(
@@ -64,7 +67,35 @@ class HomePage extends StatelessWidget {
         centerTitle: false,
         elevation: 2,
       ),
-
+      drawer: Drawer(
+        backgroundColor:
+            AppColors.expended, // Match the background color to AppBar
+        child: ListView(
+          children: [
+            const Divider(),
+            ListTile(
+              title: const Text('Profile'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilMenu()),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              title: const Text('Log Out'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+            ),
+            // Add more ListTile widgets as needed
+          ],
+        ),
+      ),
       bottomNavigationBar: const UIbottom(),
       backgroundColor: AppColors.background,
       body: Column(

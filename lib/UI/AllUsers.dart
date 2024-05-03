@@ -9,9 +9,11 @@ import 'package:get/get.dart';
 //locals
 //import '../Constants/AppColors.dart';
 //import '../Services/AuthService.dart';
+import '../UI/homePage.dart';
 import '../Components/MyTextfields.dart';
 import '../Components/ui.dart';
 import '../Services/firestore_service.dart';
+import 'ProfilMenu.dart';
 
 class AllUsers extends StatelessWidget {
   AllUsers({super.key});
@@ -98,7 +100,8 @@ class AllUsers extends StatelessWidget {
                 size: 30,
               ),
               onPressed: () {
-                print('IconButton pressed ...');
+                Scaffold.of(context)
+                    .openDrawer(); // Open the drawer from the left
               },
               splashRadius:
                   25.0, // Customize the splash radius for a smoother effect
@@ -109,6 +112,35 @@ class AllUsers extends StatelessWidget {
         ],
         centerTitle: false,
         elevation: 2,
+      ),
+      drawer: Drawer(
+        backgroundColor:
+            AppColors.expended, // Match the background color to AppBar
+        child: ListView(
+          children: [
+            const Divider(),
+            ListTile(
+              title: const Text('Profil'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilMenu()),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              title: const Text('Option 2'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+            ),
+            // Add more ListTile widgets as needed
+          ],
+        ),
       ),
 
       bottomNavigationBar: const UIbottom(),
@@ -137,12 +169,13 @@ class AllUsers extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
+
             //update button
             MyButtons(
                 onTap: () {
                   var data = [];
                   update(context);
-                  print("object");
+                  print("Update");
                 },
                 text: 'UPDATE'),
             const SizedBox(
