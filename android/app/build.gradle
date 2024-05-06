@@ -1,0 +1,96 @@
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
+    }
+
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23"
+        classpath 'com.google.gms:google-services:4.3.10'
+        //classpath "com.android.tools.build:gradle:8.3.1"
+        //classpath "dev.flutter:flutter-gradle-plugin:3.19.5"
+        //classpath 'com.google.gms:google-services:4.4.1'
+        //implementation platform('com.google.firebase:firebase-bom:32.8.0')
+        //implementation 'com.google.firebase:firebase-analytics'
+
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: "kotlin-android"
+apply plugin: "dev.flutter.flutter-gradle-plugin"
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+android {
+    compileSdkVersion 34 // Update to the latest SDK version
+    buildToolsVersion "31.0.0" // Update to the latest version
+    defaultConfig {
+        applicationId "com.example.education"
+        minSdkVersion 21 // Set it to at least 20 to resolve the conflict
+        targetSdkVersion 34 // Set it to the latest SDK version
+        versionCode 1 // Update with your desired version code
+        versionName "1.0" // Update with your desired version name
+    }
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    buildTypes {
+        release {
+            // Configure your signing config for release build
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation platform("com.google.firebase:firebase-bom:32.8.0")
+    implementation "com.google.firebase:firebase-analytics"
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
+}

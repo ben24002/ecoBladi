@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "18369806875",
+    "project_id": "shattestingapp",
+    "storage_bucket": "shattestingapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18369806875:android:557876c25ff714a2362ebe",
+        "android_client_info": {
+          "package_name": "com.example.education"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsn9ykJNnwbw6UlMEPfEwS9awfRBvAhX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
