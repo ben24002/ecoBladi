@@ -22,6 +22,10 @@ class _LoginOrRegisterPageState extends State<LoginOrRegisterPage> {
     });
   }
 
+  void Function() getTogglePages() {
+    return togglePages;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (showLoginPage) {

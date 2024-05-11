@@ -1,3 +1,4 @@
+
 buildscript {
     repositories {
         google()
@@ -10,10 +11,10 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.0'
-        //classpath "com.android.tools.build:gradle:8.3.1" // Update to the latest version
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23" // Update to the latest version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23"
         classpath 'com.google.gms:google-services:4.3.10'
-        //classpath "dev.flutter:flutter-gradle-plugin:3.19.5" // Update to the latest version
+        //classpath "com.android.tools.build:gradle:8.3.1"
+        //classpath "dev.flutter:flutter-gradle-plugin:3.19.5"
         //classpath 'com.google.gms:google-services:4.4.1'
         //implementation platform('com.google.firebase:firebase-bom:32.8.0')
         //implementation 'com.google.firebase:firebase-analytics'
@@ -56,7 +57,7 @@ android {
     buildToolsVersion "31.0.0" // Update to the latest version
     defaultConfig {
         applicationId "com.example.education"
-        minSdkVersion 20 // Set it to at least 20 to resolve the conflict
+        minSdkVersion 21 // Set it to at least 20 to resolve the conflict
         targetSdkVersion 34 // Set it to the latest SDK version
         versionCode 1 // Update with your desired version code
         versionName "1.0" // Update with your desired version name
@@ -90,4 +91,6 @@ flutter {
 dependencies {
     implementation platform("com.google.firebase:firebase-bom:32.8.0")
     implementation "com.google.firebase:firebase-analytics"
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
 }
