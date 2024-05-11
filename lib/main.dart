@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 //firebase
 import 'firebase_options.dart';
- 
+
 //import 'package:education/firestore_service.dart';
 import 'UI/searchPage.dart';
 import '../Services/AuthService.dart';
@@ -30,8 +30,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(), 
-
+      home: HomePage(),
     );
   }
 }//sheetbottom

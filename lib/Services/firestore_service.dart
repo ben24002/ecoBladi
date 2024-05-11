@@ -29,12 +29,12 @@ class FirestoreService {
 
   void setPointPosition(LatLng tappedCoords) {
     String id = FirebaseAuth.instance.currentUser!.uid;
-    print("___________________________________________");
+    print("___________________ID________________________");
     print(id);
     _db
         .collection('Positions')
         .doc(getUserId())
-        .set({'position_X': tappedCoords.toJson()});
+        .set({'Position': tappedCoords.toJson()});
   }
 
   Future<void> initializeFirestore() async {

@@ -1,14 +1,14 @@
+// ignore_for_file: library_prefixes
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:location/location.dart' as location;
+import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart' as permission;
 
 class DisplayMap extends StatefulWidget {
   static const String route = '/live_location';
-
   const DisplayMap({Key? key}) : super(key: key);
 
   @override
@@ -17,121 +17,196 @@ class DisplayMap extends StatefulWidget {
 
 class _DisplayMapState extends State<DisplayMap> {
   LocationData? _currentLocation;
-  late final MapController _mapController;
+  final MapController _mapController = MapController();
 
   bool _liveUpdate = false;
-  bool _permission = false;
-
-  String? _serviceError = '';
+  bool isWorking = false;
 
   final Location _locationService = Location();
+  final Distance distance = const Distance();
+
+  String? _serviceError;
+
+  List<LatLng> stops = [
+    const LatLng(34.8971364, -1.3484785), // Stop 1
+    const LatLng(34.894685, -1.352196), // Stop 2
+    const LatLng(34.893864, -1.355490), // Stop 3
+  ];
+
+  List<LatLng> routePoints = [];
+  List<LatLng> userPath = [];
+  List<Marker> stopMarkers = [];
+
+  int currentStopIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _mapController = MapController();
     initLocationService();
+    // Initialize markers for stops
+    createStopMarkers();
+    // Fetch the initial route
+    fetchRoute(currentStopIndex).then((points) {
+      setState(() {
+        routePoints = points;
+      });
+    });
   }
 
-// Request location permissions
-  Future<void> requestLocationPermissions() async {
-    // Access the PermissionStatus from the permission package using the prefix 'permission'
-    var status = await permission.Permission.location.request();
-    if (status != permission.PermissionStatus.granted) {
-      // Handle permission denied case here
-      // E.g., show an alert to the user
-      print(
-          "-------------------------------------------\nLocation permission denied1\n------------------------------------------------");
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Location permission denied'),
-      ));
+  void createStopMarkers() {
+    stopMarkers = stops.map((stop) {
+      return Marker(
+        point: stop,
+        child: const Icon(
+          Icons.circle, // Use an icon for the stop (can change to other icons)
+          color: Colors.black, // Customize the color as desired
+          size: 10, // Adjust size as needed
+        ),
+      );
+    }).toList();
+  }
+
+  Future<List<LatLng>> fetchRoute(int startStopIndex) async {
+    if (startStopIndex < 0 || startStopIndex >= stops.length) {
+      // Handle invalid startStopIndex
+      return [];
     }
-  }
 
-// Check permissions and access location
-  void checkPermissionsAndAccessLocation() async {
-    // Request permissions
-    var status = await _locationService.requestPermission();
-    if (status == location.PermissionStatus.granted) {
-      // Permission granted, access location services here
+    Dio dio = Dio();
+
+    LatLng start;
+    if (startStopIndex == 0 && _currentLocation != null) {
+      start = LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!);
     } else {
-      // Permission denied, handle the scenario
-      print(
-          "-------------------------------------------\nLocation permission denied2\n------------------------------------------------");
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Location permission denied'),
-      ));
+      start = stops[startStopIndex - 1];
     }
-  }
 
-  // Initialize location service
-  void initLocationService() async {
+    LatLng end = stops[startStopIndex];
+
+    // Replace 'YOUR_ROUTING_API_ENDPOINT' with the actual endpoint
     try {
-      await _locationService.changeSettings(
-        accuracy: LocationAccuracy.high,
-        interval: 1,
+      Response response = await dio.get(
+        'https://dart.dev',
+        queryParameters: {
+          'start': '${start.latitude},${start.longitude}',
+          'end': '${end.latitude},${end.longitude}',
+          // Add any additional query parameters required by your API
+        },
       );
 
-      bool serviceEnabled = await _locationService.serviceEnabled();
+      return parseRouteResponse(response);
+    } catch (e) {
+      // Handle API error
+      print('Error fetching route: $e');
+      return [];
+    }
+  }
 
+  List<LatLng> parseRouteResponse(Response response) {
+    // Implement your parsing logic here
+    // Example parsing of response data
+    // For instance, if the API response contains a list of points:
+    List<LatLng> points = [];
+    // Add code to parse response data and populate the list of points
+    return points;
+  }
+
+  // Initialize location service and handle permissions
+  void initLocationService() async {
+    try {
+      // Change location settings
+      await _locationService.changeSettings(
+        accuracy: LocationAccuracy.high,
+        interval: 1000,
+      );
+
+      // Check if location services are enabled
+      bool serviceEnabled = await _locationService.serviceEnabled();
       if (!serviceEnabled) {
-        bool serviceRequestResult = await _locationService.requestService();
-        if (!serviceRequestResult) {
+        bool requestServiceResult = await _locationService.requestService();
+        if (!requestServiceResult) {
           setState(() {
-            print(
-                "-------------------------------------------\nLocation service request failed1.\n------------------------------------------------");
-            _serviceError = 'Location service request failed.';
+            _serviceError = 'Failed to request location services.';
           });
           return;
         }
       }
 
-      //-----------------------------------------------
-
-      // Request location permission
+      // Request location permissions
       var status = await permission.Permission.location.request();
       if (status != permission.PermissionStatus.granted) {
         setState(() {
-          print(
-              "-------------------------------------------\nLocation permission denied3\n------------------------------------------------");
           _serviceError = 'Location permission denied.';
         });
         return;
       }
 
-      // Access current location and listen for location changes
+      // Get the current location
       _currentLocation = await _locationService.getLocation();
+
+      // Start listening for location changes
       _locationService.onLocationChanged.listen((LocationData locationData) {
-        if (mounted) {
-          setState(() {
-            _currentLocation = locationData;
-            if (_liveUpdate && _currentLocation != null) {
-              _mapController.move(
-                LatLng(
-                    _currentLocation!.latitude!, _currentLocation!.longitude!),
-                14.0, // Set the desired zoom level
+        setState(() {
+          _currentLocation = locationData;
+
+          // Update the current location on the map
+          if (isWorking && _currentLocation != null) {
+            LatLng currentLatLng = LatLng(
+              _currentLocation!.latitude!,
+              _currentLocation!.longitude!,
+            );
+
+            // Move the map to the new location
+            _mapController.move(currentLatLng, 18.0);
+
+            // Record the user's path
+            userPath.add(currentLatLng);
+
+            // Check if the user reached the current stop
+            if (currentStopIndex < stops.length) {
+              LatLng currentStop = stops[currentStopIndex];
+              double distanceToCurrentStop = distance.as(
+                LengthUnit.Meter,
+                currentLatLng,
+                currentStop,
               );
+
+              // Check if the user is near the current stop
+              if (distanceToCurrentStop < 50.0) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Stop reached!')),
+                );
+
+                // Move to the next stop
+                currentStopIndex++;
+                fetchRoute(currentStopIndex).then((points) {
+                  setState(() {
+                    routePoints = points;
+                  });
+                });
+              }
             }
-          });
-        }
+          }
+        });
       });
     } catch (e) {
       setState(() {
-        print(
-            "-------------------------------------------\nError initializing location service:$e\n------------------------------------------------");
         _serviceError = 'Error initializing location service: $e';
       });
-      debugPrint('Error: $e');
+      debugPrint('Error initializing location service: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Initialize current location
     LatLng currentLatLng = _currentLocation != null
         ? LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!)
         : const LatLng(34.8791468, -1.3134872);
 
+    // Define markers for the map
     final markers = <Marker>[
+      // Marker for the current location
       Marker(
         width: 80,
         height: 80,
@@ -142,66 +217,124 @@ class _DisplayMapState extends State<DisplayMap> {
           size: 40,
         ),
       ),
+      // Add stop markers
+      ...stopMarkers,
     ];
 
-    return SizedBox(
-      height: 400,
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 8),
-                child: _serviceError == null
-                    ? Text(
-                        'This is a map that is showing (${currentLatLng.latitude}, ${currentLatLng.longitude}).',
-                      )
-                    : Text(
-                        'Error occurred while acquiring location. Error message: $_serviceError',
-                      ),
-              ),
-              Flexible(
-                child: FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    center: currentLatLng,
-                    zoom: 14, // Set your desired zoom level
-                    interactiveFlags: InteractiveFlag.all,
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 8),
+              child: _serviceError == null
+                  ? Text(
+                      'Current location: (${currentLatLng.latitude}, ${currentLatLng.longitude}).',
+                    )
+                  : Text(
+                      'Error acquiring location. \nError message: $_serviceError',
                     ),
-                    MarkerLayer(markers: markers),
-                  ],
+            ),
+            Expanded(
+              child: FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  center: currentLatLng,
+                  zoom: 14,
+                  interactiveFlags: InteractiveFlag.all,
                 ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    subdomains: const ['a', 'b', 'c'],
+                    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                  ),
+                  MarkerLayer(markers: markers),
+                  // PolylineLayer for displaying the route
+                  if (routePoints.isNotEmpty)
+                    PolylineLayer(
+                      polylines: [
+                        Polyline(
+                          points: routePoints,
+                          strokeWidth: 4.0,
+                          color: Colors.blue,
+                        ),
+                      ],
+                    ),
+                  // PolylineLayer for displaying the user's path
+                  if (isWorking && userPath.isNotEmpty)
+                    PolylineLayer(
+                      polylines: [
+                        Polyline(
+                          points: userPath,
+                          strokeWidth: 4.0,
+                          color: Colors.red,
+                        ),
+                      ],
+                    ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _liveUpdate = !_liveUpdate;
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                isWorking = !isWorking;
+                final message = isWorking
+                    ? 'On work mode enabled'
+                    : 'On work mode disabled';
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(message)),
+                );
+              });
+            },
+            child: const Text('On Work'),
+          ),
+          const SizedBox(width: 10),
+          FloatingActionButton(
+            onPressed: () {
+              if (currentStopIndex < stops.length) {
+                setState(() {
+                  currentStopIndex++;
+                  fetchRoute(currentStopIndex).then((points) {
+                    setState(() {
+                      routePoints = points;
+                    });
+                  });
+                });
 
-              if (_liveUpdate) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Live update enabled'),
-                ));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Live update disabled'),
-                ));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Stop reached!')),
+                );
               }
-            });
-          },
-          child: Icon(
-            _liveUpdate ? Icons.location_on : Icons.location_off,
+            },
+            child: const Text('Stop Reached'),
           ),
-        ),
+          const SizedBox(width: 10),
+          FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                _liveUpdate = !_liveUpdate;
+                final message = _liveUpdate
+                    ? 'Live update enabled'
+                    : 'Live update disabled';
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(message)),
+                );
+              });
+            },
+            child: Icon(
+              _liveUpdate ? Icons.location_on : Icons.location_off,
+            ),
+          ),
+        ],
       ),
     );
   }
