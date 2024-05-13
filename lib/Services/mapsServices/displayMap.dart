@@ -1,11 +1,16 @@
-// ignore_for_file: library_prefixes
+// ignore_for_file: library_prefixes, use_function_type_syntax_for_parameters
+
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
+import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart' as permission;
+
+import 'api.dart';
 
 class DisplayMap extends StatefulWidget {
   static const String route = '/live_location';
@@ -16,11 +21,13 @@ class DisplayMap extends StatefulWidget {
 }
 
 class _DisplayMapState extends State<DisplayMap> {
+  int i = 0; //index of points in directions
   LocationData? _currentLocation;
   final MapController _mapController = MapController();
 
   bool _liveUpdate = false;
   bool isWorking = false;
+  bool showRoute = false;
 
   final Location _locationService = Location();
   final Distance distance = const Distance();
@@ -32,6 +39,17 @@ class _DisplayMapState extends State<DisplayMap> {
     const LatLng(34.894685, -1.352196), // Stop 2
     const LatLng(34.893864, -1.355490), // Stop 3
   ];
+
+  LatLng? getStopAtIndex(List<LatLng> stops, int index) {
+    if (index >= 0 && index < stops.length) {
+      return stops[index];
+    } else {
+      return null; // Return null if index is out of bounds
+    }
+  }
+
+  List listOfPoints = [];
+  List<LatLng> points = [];
 
   List<LatLng> routePoints = [];
   List<LatLng> userPath = [];
@@ -197,6 +215,32 @@ class _DisplayMapState extends State<DisplayMap> {
     }
   }
 
+  //methode to consume openrouteservices API
+  getCoordinates(index) async {
+    // Get the current location
+    _currentLocation = await _locationService.getLocation();
+
+    LatLng? stopLatLng = getStopAtIndex(stops, index);
+    var response = await http.get(getRouteUrl(
+        "${stopLatLng?.longitude},${stopLatLng?.latitude}",
+        "${_currentLocation?.longitude},${_currentLocation?.latitude}"));
+
+    if (response.statusCode == 200) {
+      setState(
+        () {
+          var data = jsonDecode(response.body);
+          listOfPoints = data["features"][0]['geometry']['coordinates'];
+          points = listOfPoints
+              .map((e) => LatLng(e[1].toDouble(), e[0].toDouble()))
+              .toList();
+        },
+      );
+    } else {
+      print(
+          "---------------------------------------------------------------\nresponse.statusCode:${response.statusCode}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Initialize current location
@@ -253,12 +297,12 @@ class _DisplayMapState extends State<DisplayMap> {
                   ),
                   MarkerLayer(markers: markers),
                   // PolylineLayer for displaying the route
-                  if (routePoints.isNotEmpty)
+                  if (showRoute)
                     PolylineLayer(
                       polylines: [
                         Polyline(
-                          points: routePoints,
-                          strokeWidth: 4.0,
+                          points: points,
+                          strokeWidth: 5.0,
                           color: Colors.blue,
                         ),
                       ],
@@ -302,6 +346,9 @@ class _DisplayMapState extends State<DisplayMap> {
             onPressed: () {
               if (currentStopIndex < stops.length) {
                 setState(() {
+                  getCoordinates(
+                    ++i,
+                  );
                   currentStopIndex++;
                   fetchRoute(currentStopIndex).then((points) {
                     setState(() {
@@ -333,6 +380,25 @@ class _DisplayMapState extends State<DisplayMap> {
             child: Icon(
               _liveUpdate ? Icons.location_on : Icons.location_off,
             ),
+          ),
+          const SizedBox(width: 10),
+          FloatingActionButton(
+            onPressed: () {
+              getCoordinates(
+                i,
+              );
+              setState(
+                () {
+                  showRoute = !showRoute;
+                  final message =
+                      showRoute ? 'route is visible' : 'route is hiden';
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(message)),
+                  );
+                },
+              );
+            },
+            child: Text(showRoute ? 'hide route' : 'show route'),
           ),
         ],
       ),
