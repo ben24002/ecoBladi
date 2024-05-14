@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import '../UI/homePage.dart';
 import '../Components/MyTextfields.dart';
 import '../Components/ui.dart';
+import '../Services/firestore_service.dart'as fire;
 import '../Services/firestore_service.dart';
 import 'ProfilMenu.dart';
 
@@ -25,13 +26,12 @@ class AllUsers extends StatelessWidget {
   //text editing controller
   final fullNameController = TextEditingController();
   final adressController = TextEditingController();
-  final fire = FirestoreService();
   //methods
   // String id = FirestoreService.getUserId();
   update(context) {
     _db
         .collection('/Utilisateurs')
-        .where('ID', isEqualTo: fire.getUserId())
+        .where('ID', isEqualTo: fire.FirestoreService.getUserId())
         .get()
         .then((QuerySnapshot docs) {
       if (docs.docs.isNotEmpty) {

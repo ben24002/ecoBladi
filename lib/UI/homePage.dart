@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import '../Components/ProfilCards.dart';
 import '../Components/signaler.dart';
 import '../Constants/AppColors.dart';
-import '../Services/mapsServices/displayMap.dart';
+import '../Services/mapsServices/displayMap.dart'as driver;
+import '../Services/mapsServices/UserMap.dart'as user;
 import '../Components/ui.dart';
 import 'ProfilMenu.dart';
 
@@ -164,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                     height: 400,
                     width: 400,
                     //map
-                    child: DisplayMap(),
+                    child: driver.DisplayMap(),
                   ),
                   ProfileCards(
                     cardsDataList: cardsDataList,
@@ -176,7 +177,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             //from flutter flow----------------------------------------------------------------------------------------------------------------------------------------------
-            const Signalement(),
+            const user.DisplayMap(),
+            //const Signalement(),
             //end from flutter flow----------------------------------------------------------------------------------------------------------------------------------------------
           ],
         ),

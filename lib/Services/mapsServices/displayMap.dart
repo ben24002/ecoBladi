@@ -1,4 +1,4 @@
-// ignore_for_file: library_prefixes, use_function_type_syntax_for_parameters
+// ignore_for_file: library_prefixes, use_function_type_syntax_for_parameters, library_private_types_in_public_api, avoid_print, deprecated_member_use, file_names
 
 import 'dart:convert';
 
@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart' as permission;
 
 import 'api.dart';
+import '../firestore_service.dart' as fire;
 
 class DisplayMap extends StatefulWidget {
   static const String route = '/live_location';
@@ -169,6 +170,11 @@ class _DisplayMapState extends State<DisplayMap> {
 
           // Update the current location on the map
           if (isWorking && _currentLocation != null) {
+            fire.FirestoreService.setDriverPosition(
+              _currentLocation as LatLng,
+              getCoordinates(i),
+              isWorking,
+            );
             LatLng currentLatLng = LatLng(
               _currentLocation!.latitude!,
               _currentLocation!.longitude!,
@@ -303,7 +309,7 @@ class _DisplayMapState extends State<DisplayMap> {
                         Polyline(
                           points: points,
                           strokeWidth: 5.0,
-                          color: Colors.blue,
+                          color: Colors.red,
                         ),
                       ],
                     ),
@@ -314,7 +320,7 @@ class _DisplayMapState extends State<DisplayMap> {
                         Polyline(
                           points: userPath,
                           strokeWidth: 4.0,
-                          color: Colors.red,
+                          color: Colors.blue,
                         ),
                       ],
                     ),

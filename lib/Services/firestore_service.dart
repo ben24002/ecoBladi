@@ -13,14 +13,14 @@ import 'package:get/get.dart';
 //import '../Constants/models.dart';
 
 class FirestoreService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static final FirebaseFirestore _db = FirebaseFirestore.instance;
   static FirestoreService get instance => Get.find();
 
   // Initialize Firestore
   FirestoreService() {
     initializeFirestore();
   }
-  String getUserId() {
+  static String getUserId() {
     String id = FirebaseAuth.instance.currentUser!.uid;
     print("___________________________________________");
     print(id);
@@ -29,12 +29,52 @@ class FirestoreService {
 
   void setPointPosition(LatLng tappedCoords) {
     String id = FirebaseAuth.instance.currentUser!.uid;
-    print("___________________ID________________________");
-    print(id);
+    print("______________________________$id ______________________________");
     _db
         .collection('Positions')
         .doc(getUserId())
         .set({'Position': tappedCoords.toJson()});
+  }
+
+  static void setDriverPosition(
+    LatLng CurrentPosition,
+    LatLng? getStopAtIndex,
+    bool isWorking,
+  ) {
+    String id = FirebaseAuth.instance.currentUser!.uid;
+    print("______________________________$id ______________________________");
+    _db.collection('Eboueurs').doc(getUserId()).set(
+      {
+        'CurrentPosition': CurrentPosition.toJson(),
+        'StopIndex': getStopAtIndex?.toJson() as SetOptions?,
+        'isWorking': isWorking,
+      },
+    );
+  }
+
+  static Future<List<LatLng>> getDriversLocation() async {
+    List<LatLng> positions = [];
+    CollectionReference<Map<String, dynamic>> eboueursCollection =
+        FirebaseFirestore.instance.collection('Eboueurs');
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await eboueursCollection.get();
+
+    // Iterate through the documents and retrieve the CurrentPosition field
+    querySnapshot.docs.forEach((DocumentSnapshot<Map<String, dynamic>> doc) {
+      // Get the CurrentPosition field from each document
+      Map<String, dynamic>? currentPositionMap = doc.get('CurrentPosition');
+      if (currentPositionMap != null) {
+        // Construct a LatLng object from the CurrentPosition field
+        LatLng position = LatLng(
+          currentPositionMap['latitude'],
+          currentPositionMap['longitude'],
+        );
+        // Add the position to the list
+        positions.add(position);
+      }
+    });
+
+    return positions;
   }
 
   Future<void> initializeFirestore() async {

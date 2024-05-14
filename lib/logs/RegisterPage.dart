@@ -12,7 +12,7 @@ import '../Components/MyButtons.dart';
 import '../Components/MyTextfields.dart';
 import '../Components/SquareTile.dart';
 import '../Constants/AppColors.dart';
-import '../Services/firestore_service.dart';
+import '../Services/firestore_service.dart'as fire;
 import '../UI/AllUsers.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -33,7 +33,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final ConfirmPasswordController = TextEditingController();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final fire = FirestoreService();
 
   //generating random docs key
   String generateRandomString() {
@@ -90,14 +89,14 @@ class _RegisterPageState extends State<RegisterPage> {
           password: passwordController.text,
         );
         print('user created');
-        await _db.collection('Utilisateurs').doc(fire.getUserId()).set({
+        await _db.collection('Utilisateurs').doc(fire.FirestoreService.getUserId()).set({
           'username': usernameController.text,
           'password': passwordController.text,
           'role': 'user',
         });
         print('user added');
         print('______________________________________________________________');
-        print(fire.getUserId());
+        print(fire.FirestoreService.getUserId());
         //pop the loading circle
         Navigator.pop(context);
         Navigator.push(

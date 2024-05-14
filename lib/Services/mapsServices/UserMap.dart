@@ -1,5 +1,7 @@
 // ignore_for_file: file_names, library_private_types_in_public_api, avoid_print, use_build_context_synchronously, deprecated_member_use
 
+//import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -9,6 +11,7 @@ import 'package:location/location.dart' as location;
 import 'package:permission_handler/permission_handler.dart' as permission;
 
 import '../firestore_service.dart';
+import '../firestore_service.dart' as fire;
 
 class DisplayMap extends StatefulWidget {
   static const String route = '/live_location';
@@ -25,6 +28,7 @@ class _DisplayMapState extends State<DisplayMap> {
   late final MapController _mapController;
 
   bool _liveUpdate = false;
+  bool seeWorkers = false;
 
   String? _serviceError;
 
@@ -35,6 +39,20 @@ class _DisplayMapState extends State<DisplayMap> {
     super.initState();
     _mapController = MapController();
     initLocationService();
+  }
+
+  List<LatLng> stops = [
+    const LatLng(34.8971364, -1.3484785), // Stop 1
+    const LatLng(34.894685, -1.352196), // Stop 2
+    const LatLng(34.893864, -1.355490), // Stop 3
+  ];
+
+  LatLng? getStopAtIndex(List<LatLng> stops, int index) {
+    if (index >= 0 && index < stops.length) {
+      return stops[index];
+    } else {
+      return null; // Return null if index is out of bounds
+    }
   }
 
   // Request location permissions
@@ -90,7 +108,6 @@ class _DisplayMapState extends State<DisplayMap> {
         }
       }
 
-
       // Request location permission
       var status = await permission.Permission.location.request();
       if (status != permission.PermissionStatus.granted) {
@@ -132,15 +149,6 @@ class _DisplayMapState extends State<DisplayMap> {
     }
   }
 
-//from GPT ------------------------------------------------------------------------------------
-
-  List<LatLng> stops = [
-    const LatLng(34.0, -118.2), // Arrêt 1
-    const LatLng(34.1, -118.3), // Arrêt 2
-    const LatLng(34.2, -118.4), // Arrêt 3
-    // Ajoutez d'autres arrêts ici
-  ];
-
   Future<List<LatLng>> fetchRoute(List<LatLng> stops) async {
     List<LatLng> routePoints = [];
 
@@ -174,19 +182,37 @@ class _DisplayMapState extends State<DisplayMap> {
         ? LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!)
         : const LatLng(34.8791468, -1.3134872);
 
-    //the localisation signe
-    final markers = <Marker>[
+    List<Marker> markers = [
       Marker(
         width: 80,
         height: 80,
         point: currentLatLng,
         child: const Icon(
           Icons.location_on,
-          color: Colors.red,
+          color: Colors.yellow,
           size: 40,
         ),
       ),
     ];
+
+    // Fetch drivers' locations asynchronously and add markers for each
+    fire.FirestoreService.getDriversLocation().then((driverPositions) {
+      markers.addAll(driverPositions.map((position) => Marker(
+            width: 80,
+            height: 80,
+            point: position,
+            child: const Icon(
+              Icons.location_on,
+              color: Colors.red,
+              size: 40,
+            ),
+          )));
+      print('----------------------------------------------------------marker added');
+      setState(() {}); // Trigger rebuild to update markers
+    }).catchError((error) {
+      print('------------------------------------------------------');
+      print('Error fetching driver positions: $error');
+    });
 
     return SizedBox(
       height: 400,
@@ -228,25 +254,46 @@ class _DisplayMapState extends State<DisplayMap> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _liveUpdate = !_liveUpdate;
+        floatingActionButton: Row(
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  _liveUpdate = !_liveUpdate;
 
-              if (_liveUpdate) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Live update enabled'),
-                ));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Live update disabled'),
-                ));
-              }
-            });
-          },
-          child: Icon(
-            _liveUpdate ? Icons.location_on : Icons.location_off,
-          ),
+                  if (_liveUpdate) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Live update enabled'),
+                    ));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Live update disabled'),
+                    ));
+                  }
+                });
+              },
+              child: Icon(
+                _liveUpdate ? Icons.location_on : Icons.location_off,
+              ),
+            ),
+            const SizedBox(width: 10),
+            FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  seeWorkers = !seeWorkers;
+                  final message = seeWorkers
+                      ? 'see Workers mode enabled'
+                      : 'see Workers mode disabled';
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(message)),
+                  );
+                });
+              },
+              child: const Text(
+                'see\n workers',
+              ),
+            ),
+          ],
         ),
       ),
     );
