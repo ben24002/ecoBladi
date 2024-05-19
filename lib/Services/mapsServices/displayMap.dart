@@ -168,13 +168,15 @@ class _DisplayMapState extends State<DisplayMap> {
         setState(() {
           _currentLocation = locationData;
 
+          setDriverPosition(
+            _currentLocation!.latitude!,
+            _currentLocation!.longitude!,
+            getStopAtIndex(stops, i),
+            isWorking,
+          );
+
           // Update the current location on the map
           if (isWorking && _currentLocation != null) {
-            fire.FirestoreService.setDriverPosition(
-              _currentLocation as LatLng,
-              getCoordinates(i),
-              isWorking,
-            );
             LatLng currentLatLng = LatLng(
               _currentLocation!.latitude!,
               _currentLocation!.longitude!,
@@ -247,6 +249,22 @@ class _DisplayMapState extends State<DisplayMap> {
     }
   }
 
+  // Method to set driver position using FirestoreService
+  void setDriverPosition(
+    double latitude,
+    double longitude,
+    LatLng? stopPosition,
+    bool isWorking,
+  ) {
+    // Call the setDriverPosition method from FirestoreService
+    LatLng currentPosition = LatLng(latitude, longitude);
+    fire.FirestoreService.setDriverPosition(
+      currentPosition,
+      stopPosition,
+      isWorking,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Initialize current location
@@ -264,7 +282,7 @@ class _DisplayMapState extends State<DisplayMap> {
         child: const Icon(
           Icons.location_on,
           color: Colors.red,
-          size: 40,
+          size: 30,
         ),
       ),
       // Add stop markers
@@ -302,25 +320,25 @@ class _DisplayMapState extends State<DisplayMap> {
                     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                   ),
                   MarkerLayer(markers: markers),
-                  // PolylineLayer for displaying the route
-                  if (showRoute)
-                    PolylineLayer(
-                      polylines: [
-                        Polyline(
-                          points: points,
-                          strokeWidth: 5.0,
-                          color: Colors.red,
-                        ),
-                      ],
-                    ),
                   // PolylineLayer for displaying the user's path
                   if (isWorking && userPath.isNotEmpty)
                     PolylineLayer(
                       polylines: [
                         Polyline(
                           points: userPath,
-                          strokeWidth: 4.0,
+                          strokeWidth: 6.0,
                           color: Colors.blue,
+                        ),
+                      ],
+                    ),
+                  // PolylineLayer for displaying the route
+                  if (showRoute)
+                    PolylineLayer(
+                      polylines: [
+                        Polyline(
+                          points: points,
+                          strokeWidth: 3.0,
+                          color: Colors.red,
                         ),
                       ],
                     ),

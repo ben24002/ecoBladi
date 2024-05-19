@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // Locals
 
 import '../Components/ProfilCards.dart';
-import '../Components/signaler.dart';
+//import '../Components/signaler.dart';
 import '../Constants/AppColors.dart';
 import '../Services/mapsServices/displayMap.dart'as driver;
 import '../Services/mapsServices/UserMap.dart'as user;

@@ -1,5 +1,5 @@
 //firebase
-// ignore_for_file: avoid_print, body_might_complete_normally_catch_error, unused_element
+// ignore_for_file: avoid_print, body_might_complete_normally_catch_error, unused_element, avoid_function_literals_in_foreach_calls
 
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -37,23 +37,24 @@ class FirestoreService {
   }
 
   static void setDriverPosition(
-    LatLng CurrentPosition,
-    LatLng? getStopAtIndex,
+    LatLng currentPosition,
+    LatLng? stopPosition,
     bool isWorking,
   ) {
     String id = FirebaseAuth.instance.currentUser!.uid;
     print("______________________________$id ______________________________");
     _db.collection('Eboueurs').doc(getUserId()).set(
       {
-        'CurrentPosition': CurrentPosition.toJson(),
-        'StopIndex': getStopAtIndex?.toJson() as SetOptions?,
+        'CurrentPosition': currentPosition.toJson(),
+        'StopIndex':
+            stopPosition?.toJson(), // Assuming stopPosition is a LatLng object
         'isWorking': isWorking,
       },
     );
   }
 
-  static Future<List<LatLng>> getDriversLocation() async {
-    List<LatLng> positions = [];
+  static Future<List<List<double>>> getDriversLocation() async {
+    List<List<double>> positions = [];
     CollectionReference<Map<String, dynamic>> eboueursCollection =
         FirebaseFirestore.instance.collection('Eboueurs');
     QuerySnapshot<Map<String, dynamic>> querySnapshot =
@@ -62,15 +63,22 @@ class FirestoreService {
     // Iterate through the documents and retrieve the CurrentPosition field
     querySnapshot.docs.forEach((DocumentSnapshot<Map<String, dynamic>> doc) {
       // Get the CurrentPosition field from each document
-      Map<String, dynamic>? currentPositionMap = doc.get('CurrentPosition');
-      if (currentPositionMap != null) {
-        // Construct a LatLng object from the CurrentPosition field
-        LatLng position = LatLng(
-          currentPositionMap['latitude'],
-          currentPositionMap['longitude'],
-        );
-        // Add the position to the list
-        positions.add(position);
+      Map<String, dynamic>? currentPositionMap = doc.data();
+      if (currentPositionMap != null &&
+          currentPositionMap.containsKey('CurrentPosition') &&
+          currentPositionMap['CurrentPosition'] != null &&
+          currentPositionMap['CurrentPosition'].containsKey('latitude') &&
+          currentPositionMap['CurrentPosition'].containsKey('longitude')) {
+        // Extract latitude and longitude from the map
+        double? latitude =
+            currentPositionMap['CurrentPosition']['latitude'] as double?;
+        double? longitude =
+            currentPositionMap['CurrentPosition']['longitude'] as double?;
+        print("---------------------$latitude,$longitude----------------------");
+        if (latitude != null && longitude != null) {
+          // Add the latitude and longitude to the list
+          positions.add([latitude, longitude]);
+        }
       }
     });
 

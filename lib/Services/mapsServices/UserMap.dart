@@ -183,36 +183,45 @@ class _DisplayMapState extends State<DisplayMap> {
         : const LatLng(34.8791468, -1.3134872);
 
     List<Marker> markers = [
-      Marker(
+      const Marker(
         width: 80,
         height: 80,
-        point: currentLatLng,
-        child: const Icon(
+        point: LatLng(34.8791468, -1.3134872), //currentLatLng,
+        child: Icon(
           Icons.location_on,
           color: Colors.yellow,
           size: 40,
         ),
       ),
     ];
-
-    // Fetch drivers' locations asynchronously and add markers for each
-    fire.FirestoreService.getDriversLocation().then((driverPositions) {
-      markers.addAll(driverPositions.map((position) => Marker(
-            width: 80,
-            height: 80,
-            point: position,
-            child: const Icon(
-              Icons.location_on,
-              color: Colors.red,
-              size: 40,
+    void fetchData() {if (mounted) {
+      FirestoreService.getDriversLocation().then(
+        (driverPositions) {
+          markers.addAll(
+            driverPositions.map(
+              (position) => Marker(
+                width: 80,
+                height: 80,
+                point: LatLng(position[0], position[1]),
+                child: const Icon(
+                  Icons.no_crash_rounded,
+                  color: Colors.red,
+                  size: 40,
+                ),
+              ),
             ),
-          )));
-      print('----------------------------------------------------------marker added');
-      setState(() {}); // Trigger rebuild to update markers
-    }).catchError((error) {
-      print('------------------------------------------------------');
-      print('Error fetching driver positions: $error');
-    });
+          );
+        },
+      ).catchError(
+        (error) {
+          print('------------------------------------------------------\n\n');
+          print('Error fetching driver positions: $error');
+        },
+      );
+    }
+    }
+
+    fetchData();
 
     return SizedBox(
       height: 400,
